@@ -100,10 +100,10 @@ function validateEmailOrPhone(input) {
 }
 // After successful login
 // Retrieve the logged-in user's email from localStorage
-let loggedInUserEmail = localStorage.getItem("userEmail");
+let userEmail = localStorage.getItem("userEmail");
+let userName = localStorage.getItem("userName"); // If you store names
 
-if (loggedInUserEmail) {
-    window.parent.postMessage({ email: loggedInUserEmail }, "http://127.0.0.1:5503/index.html#");
-} else {
-    console.error("No user email found. User might not be logged in.");
+if (userEmail) {
+    window.parent.postMessage({ name: userName, email: userEmail }, "http://127.0.0.1:5503");
 }
+
