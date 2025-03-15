@@ -22,20 +22,25 @@ document.addEventListener("DOMContentLoaded", function () {
 function validateSignUp(event) {
     event.preventDefault();
 
-    let name = document.getElementById("name").value.trim();
-    let emailOrPhone = document.getElementById("signup-email-phone").value.trim();
-    let password = document.getElementById("signup-password").value.trim();
-    let confirmPassword = document.getElementById("signup-confirm-password").value.trim();
-    
+    let name = document.getElementById("name")?.value.trim();
+    let emailOrPhone = document.getElementById("signup-email-phone")?.value.trim();
+    let password = document.getElementById("signup-password")?.value.trim();
+    let confirmPassword = document.getElementById("signup-confirm-password")?.value.trim();
+
     let errorMessage = document.getElementById("signup-error-message");
     let emailError = document.getElementById("signup-email-phone-error");
 
+    if (!errorMessage || !emailError) {
+        console.error("Error elements not found!");
+        return;
+    }
+
+    errorMessage.textContent = "";
+    emailError.textContent = "";
+
     let valid = true;
 
-    emailError.textContent = "";
-    errorMessage.textContent = "";
-
-    if (name === "") {
+    if (!name) {
         errorMessage.textContent = "Name cannot be empty!";
         valid = false;
     }
@@ -64,9 +69,14 @@ function validateSignUp(event) {
 function validateSignIn(event) {
     event.preventDefault();
 
-    let emailOrPhone = document.getElementById("signin-email-phone").value.trim();
-    let password = document.getElementById("signin-password").value.trim();
+    let emailOrPhone = document.getElementById("signin-email-phone")?.value.trim();
+    let password = document.getElementById("signin-password")?.value.trim();
     let signinError = document.getElementById("signin-error");
+
+    if (!signinError) {
+        console.error("Sign-in error element not found!");
+        return;
+    }
 
     signinError.textContent = "";
 
@@ -98,12 +108,16 @@ function validateEmailOrPhone(input) {
     const phonePattern = /^[0-9]{10}$/;
     return emailPattern.test(input) || phonePattern.test(input);
 }
-// After successful login
-// Retrieve the logged-in user's email from localStorage
-let userEmail = localStorage.getItem("userEmail");
-let userName = localStorage.getItem("userName"); // If you store names
 
-if (userEmail) {
-    window.parent.postMessage({ name: userName, email: userEmail }, "http://127.0.0.1:5503");
-}
+// After successful login, send user data to the parent window
+document.addEventListener("DOMContentLoaded", function () {
+    let userEmail = localStorage.getItem("userEmail");
+    let userName = localStorage.getItem("userName"); // If you store names
 
+    if (userEmail) {
+        console.log("Sending login data to parent window...");
+
+        // Ensure the origin matches where you're embedding this page
+        window.parent.postMessage({ name: userName, email: userEmail }, "https://pramodh-rs2004.github.io");
+    }
+});
