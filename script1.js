@@ -99,5 +99,11 @@ function validateEmailOrPhone(input) {
     return emailPattern.test(input) || phonePattern.test(input);
 }
 // After successful login
-let loggedInUserEmail = "user@example.com";  // Replace with actual user email from login system
-window.parent.postMessage({ email: loggedInUserEmail }, "http://127.0.0.1:5503/index.html#"); 
+// Retrieve the logged-in user's email from localStorage
+let loggedInUserEmail = localStorage.getItem("userEmail");
+
+if (loggedInUserEmail) {
+    window.parent.postMessage({ email: loggedInUserEmail }, "http://127.0.0.1:5503/index.html#");
+} else {
+    console.error("No user email found. User might not be logged in.");
+}
