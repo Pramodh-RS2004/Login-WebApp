@@ -98,3 +98,6 @@ function validateEmailOrPhone(input) {
     const phonePattern = /^[0-9]{10}$/;
     return emailPattern.test(input) || phonePattern.test(input);
 }
+// After successful login
+let loggedInUserEmail = "user@example.com";  // Replace with actual user email from login system
+window.parent.postMessage({ email: loggedInUserEmail }, "http://127.0.0.1:5503/index.html#"); 
