@@ -5,12 +5,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (signUpButton && signInButton && container) {
         signUpButton.addEventListener("click", () => {
-            console.log("Switching to Sign-Up"); // Debugging log
+            console.log("Switching to Sign-Up");
             container.classList.add("right-panel-active");
         });
 
         signInButton.addEventListener("click", () => {
-            console.log("Switching to Sign-In"); // Debugging log
+            console.log("Switching to Sign-In");
             container.classList.remove("right-panel-active");
         });
     } else {
@@ -99,7 +99,11 @@ function validateSignIn(event) {
     }
 
     alert("Sign-in successful! Redirecting...");
-    window.location.href = "https://demo.thingsboard.io/account/profile";
+    
+    // Send user data to the parent window (ThingsBoard integration)
+    window.parent.postMessage({ name: localStorage.getItem("userName"), email: storedEmail }, "https://pramodh-rs2004.github.io");
+
+    closeLoginPopup();
 }
 
 // Validate Email or Phone
@@ -109,15 +113,25 @@ function validateEmailOrPhone(input) {
     return emailPattern.test(input) || phonePattern.test(input);
 }
 
-// After successful login, send user data to the parent window
-document.addEventListener("DOMContentLoaded", function () {
-    let userEmail = localStorage.getItem("userEmail");
-    let userName = localStorage.getItem("userName"); // If you store names
+// Handle incoming messages for login
+window.addEventListener("message", function (event) {
+    console.log("Received message from:", event.origin, "Data:", event.data);
+    
+    if (event.origin !== "https://pramodh-rs2004.github.io") return;
 
-    if (userEmail) {
-        console.log("Sending login data to parent window...");
-
-        // Ensure the origin matches where you're embedding this page
-        window.parent.postMessage({ name: userName, email: userEmail }, "https://pramodh-rs2004.github.io");
+    let userData = event.data;
+    if (userData.email) {
+        document.getElementById("userInfo").innerHTML = `<strong>Welcome, ${userData.email}</strong>`;
+        document.getElementById("loginText").innerText = "Logout";
+        closeLoginPopup();
     }
-});
+}, false);
+
+// Ensure the login popup opens properly
+function openLoginPopup() {
+    document.getElementById("loginModal").style.display = "flex";
+}
+
+function closeLoginPopup() {
+    document.getElementById("loginModal").style.display = "none";
+}
