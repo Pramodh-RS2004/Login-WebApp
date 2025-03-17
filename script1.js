@@ -1,26 +1,7 @@
-// Function to check if user is logged in before sending data
-function checkLoginStatus() {
-    let userEmail = localStorage.getItem("userEmail");
-    let userName = localStorage.getItem("userName");
-    let isLoggedIn = localStorage.getItem("isLoggedIn"); // Check login status
-
-    if (userEmail && isLoggedIn === "true") {
-        window.parent.postMessage({ name: userName, email: userEmail }, "http://127.0.0.1:5503");
-    }
-}
-
 document.addEventListener("DOMContentLoaded", function () { 
-    console.log("Script Loaded Successfully"); // Debugging log
-
-    // Ensure elements exist before accessing them
-    function getElement(id) {
-        let element = document.getElementById(id);
-        if (!element) console.warn(`Element with ID '${id}' not found.`);
-        return element;
-    }
-
-    const loginButton = getElement('loginButton');  
-    const userInfo = getElement('userInfo');  
+    // Now your code can safely access elements  
+    const loginButton = document.getElementById('loginButton');  
+    const userInfo = document.getElementById('userInfo');  
 
     if (loginButton) {  
         loginButton.addEventListener("click", openLoginPopup);  
@@ -30,19 +11,19 @@ document.addEventListener("DOMContentLoaded", function () {
         userInfo.innerHTML = "";  
     }  
 
-    // Switch Between Sign-Up and Sign-In Panels
-    const signUpButton = getElement("signUp");
-    const signInButton = getElement("signIn");
-    const container = getElement("container");
+    // Your existing code starts here
+    const signUpButton = document.getElementById("signUp");
+    const signInButton = document.getElementById("signIn");
+    const container = document.getElementById("container");
 
     if (signUpButton && signInButton && container) {
         signUpButton.addEventListener("click", () => {
-            console.log("Switching to Sign-Up");
+            console.log("Switching to Sign-Up"); // Debugging log
             container.classList.add("right-panel-active");
         });
 
         signInButton.addEventListener("click", () => {
-            console.log("Switching to Sign-In");
+            console.log("Switching to Sign-In"); // Debugging log
             container.classList.remove("right-panel-active");
         });
     } else {
@@ -53,31 +34,31 @@ document.addEventListener("DOMContentLoaded", function () {
     function validateSignUp(event) {
         event.preventDefault();
 
-        let name = getElement("name").value.trim();
-        let emailOrPhone = getElement("signup-email-phone").value.trim();
-        let password = getElement("signup-password").value.trim();
-        let confirmPassword = getElement("signup-confirm-password").value.trim();
+        let name = document.getElementById("name").value.trim();
+        let emailOrPhone = document.getElementById("signup-email-phone").value.trim();
+        let password = document.getElementById("signup-password").value.trim();
+        let confirmPassword = document.getElementById("signup-confirm-password").value.trim();
         
-        let errorMessage = getElement("signup-error-message");
-        let emailError = getElement("signup-email-phone-error");
+        let errorMessage = document.getElementById("signup-error-message");
+        let emailError = document.getElementById("signup-email-phone-error");
 
         let valid = true;
 
-        if (emailError) emailError.textContent = "";
-        if (errorMessage) errorMessage.textContent = "";
+        emailError.textContent = "";
+        errorMessage.textContent = "";
 
         if (name === "") {
-            if (errorMessage) errorMessage.textContent = "Name cannot be empty!";
+            errorMessage.textContent = "Name cannot be empty!";
             valid = false;
         }
 
         if (!validateEmailOrPhone(emailOrPhone)) {
-            if (emailError) emailError.textContent = "Enter a valid email or phone number!";
+            emailError.textContent = "Enter a valid email or phone number!";
             valid = false;
         }
 
         if (password !== confirmPassword) {
-            if (errorMessage) errorMessage.textContent = "Passwords do not match!";
+            errorMessage.textContent = "Passwords do not match!";
             valid = false;
         }
 
@@ -85,7 +66,6 @@ document.addEventListener("DOMContentLoaded", function () {
             localStorage.setItem("userName", name);
             localStorage.setItem("userEmail", emailOrPhone);
             localStorage.setItem("userPassword", password);
-            localStorage.setItem("isLoggedIn", "true");
 
             alert("Sign-up successful! You can now sign in.");
             container.classList.remove("right-panel-active"); // Switch to Sign-In panel
@@ -96,31 +76,30 @@ document.addEventListener("DOMContentLoaded", function () {
     function validateSignIn(event) {
         event.preventDefault();
 
-        let emailOrPhone = getElement("signin-email-phone").value.trim();
-        let password = getElement("signin-password").value.trim();
-        let signinError = getElement("signin-error");
+        let emailOrPhone = document.getElementById("signin-email-phone").value.trim();
+        let password = document.getElementById("signin-password").value.trim();
+        let signinError = document.getElementById("signin-error");
 
-        if (signinError) signinError.textContent = "";
+        signinError.textContent = "";
 
         let storedEmail = localStorage.getItem("userEmail");
         let storedPassword = localStorage.getItem("userPassword");
 
         if (!validateEmailOrPhone(emailOrPhone)) {
-            if (signinError) signinError.textContent = "Enter a valid email or phone number!";
+            signinError.textContent = "Enter a valid email or phone number!";
             return;
         }
 
         if (!storedEmail || !storedPassword) {
-            if (signinError) signinError.textContent = "No account found. Please sign up first!";
+            signinError.textContent = "No account found. Please sign up first!";
             return;
         }
 
         if (emailOrPhone !== storedEmail || password !== storedPassword) {
-            if (signinError) signinError.textContent = "Invalid email/phone or password!";
+            signinError.textContent = "Invalid email/phone or password!";
             return;
         }
 
-        localStorage.setItem("isLoggedIn", "true");
         alert("Sign-in successful! Redirecting...");
         window.location.href = "https://demo.thingsboard.io/account/profile";
     }
@@ -132,12 +111,12 @@ document.addEventListener("DOMContentLoaded", function () {
         return emailPattern.test(input) || phonePattern.test(input);
     }
 
-    // After successful login, send user data
+    // After successful login
+    // Retrieve the logged-in user's email from localStorage
     let userEmail = localStorage.getItem("userEmail");
-    let userName = localStorage.getItem("userName");
-    let isLoggedIn = localStorage.getItem("isLoggedIn");
+    let userName = localStorage.getItem("userName"); // If you store names
 
-    if (userEmail && isLoggedIn === "true") {
+    if (userEmail) {
         window.parent.postMessage({ name: userName, email: userEmail }, "http://127.0.0.1:5503");
     }
 });
