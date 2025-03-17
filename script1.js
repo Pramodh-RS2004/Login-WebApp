@@ -1,36 +1,33 @@
-document.addEventListener("DOMContentLoaded", function () { 
-    // Now your code can safely access elements  
-    const loginButton = document.getElementById('loginButton');  
-    const userInfo = document.getElementById('userInfo');  
+document.addEventListener("DOMContentLoaded", function () {
+    const loginButton = document.getElementById('loginButton');
+    const userInfo = document.getElementById('userInfo');
 
-    if (loginButton) {  
-        loginButton.addEventListener("click", openLoginPopup);  
-    }  
+    if (loginButton) {
+        loginButton.addEventListener("click", openLoginPopup);
+    }
 
-    if (userInfo) {  
-        userInfo.innerHTML = "";  
-    }  
+    if (userInfo) {
+        userInfo.innerHTML = "";
+    }
 
-    // Your existing code starts here
     const signUpButton = document.getElementById("signUp");
     const signInButton = document.getElementById("signIn");
     const container = document.getElementById("container");
 
     if (signUpButton && signInButton && container) {
         signUpButton.addEventListener("click", () => {
-            console.log("Switching to Sign-Up"); // Debugging log
+            console.log("Switching to Sign-Up");
             container.classList.add("right-panel-active");
         });
 
         signInButton.addEventListener("click", () => {
-            console.log("Switching to Sign-In"); // Debugging log
+            console.log("Switching to Sign-In");
             container.classList.remove("right-panel-active");
         });
     } else {
         console.error("One or more elements not found!");
     }
 
-    // Sign-Up Validation
     function validateSignUp(event) {
         event.preventDefault();
 
@@ -72,7 +69,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // Sign-In Validation
     function validateSignIn(event) {
         event.preventDefault();
 
@@ -101,22 +97,17 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         alert("Sign-in successful! Redirecting...");
-        window.location.href = "https://demo.thingsboard.io/account/profile";
+        
+        // Send login data to the main page
+        window.opener.postMessage({ name: localStorage.getItem("userName"), email: emailOrPhone }, "http://127.0.0.1:5500");
+        
+        // Close login page
+        window.close();
     }
 
-    // Validate Email or Phone
     function validateEmailOrPhone(input) {
         const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         const phonePattern = /^[0-9]{10}$/;
         return emailPattern.test(input) || phonePattern.test(input);
-    }
-
-    // After successful login
-    // Retrieve the logged-in user's email from localStorage
-    let userEmail = localStorage.getItem("userEmail");
-    let userName = localStorage.getItem("userName"); // If you store names
-
-    if (userEmail) {
-        window.parent.postMessage({ name: userName, email: userEmail }, "http://127.0.0.1:5503");
     }
 });
