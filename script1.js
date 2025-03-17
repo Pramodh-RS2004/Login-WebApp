@@ -1,3 +1,14 @@
+// Function to check if user is logged in before sending data
+function checkLoginStatus() {
+    let userEmail = localStorage.getItem("userEmail");
+    let userName = localStorage.getItem("userName");
+    let isLoggedIn = localStorage.getItem("isLoggedIn"); // Check login status
+
+    if (userEmail && isLoggedIn === "true") {
+        window.parent.postMessage({ name: userName, email: userEmail }, "http://127.0.0.1:5503");
+    }
+}
+
 document.addEventListener("DOMContentLoaded", function () { 
     // Now your code can safely access elements  
     const loginButton = document.getElementById('loginButton');  
