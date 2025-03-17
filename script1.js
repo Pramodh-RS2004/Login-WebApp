@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (signUpButton && signInButton && container) {
         signUpButton.addEventListener("click", () => {
             console.log("Switching to Sign-Up"); // Debugging log
-            container.classList.add("right-panel-active");
+            container.classList.add("left-panel-active");
         });
 
         signInButton.addEventListener("click", () => {
