@@ -19,45 +19,42 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 // Sign-Up Validation
-function validateSignUp(event) {
-    event.preventDefault();
+function validateSignIn(event) {
+    event.preventDefault(); // Prevent page refresh
 
-    let name = document.getElementById("name").value.trim();
-    let emailOrPhone = document.getElementById("signup-email-phone").value.trim();
-    let password = document.getElementById("signup-password").value.trim();
-    let confirmPassword = document.getElementById("signup-confirm-password").value.trim();
-    
-    let errorMessage = document.getElementById("signup-error-message");
-    let emailError = document.getElementById("signup-email-phone-error");
+    let emailOrPhone = getElement("signin-email-phone").value.trim();
+    let password = getElement("signin-password").value.trim();
+    let signinError = getElement("signin-error");
 
-    let valid = true;
+    if (signinError) signinError.textContent = "";
 
-    emailError.textContent = "";
-    errorMessage.textContent = "";
+    // Get stored credentials
+    let storedEmail = localStorage.getItem("userEmail");
+    let storedPassword = localStorage.getItem("userPassword");
 
-    if (name === "") {
-        errorMessage.textContent = "Name cannot be empty!";
-        valid = false;
-    }
+    console.log("Stored Email:", storedEmail); // Debugging log
+    console.log("Entered Email:", emailOrPhone);
+    console.log("Stored Password:", storedPassword);
+    console.log("Entered Password:", password);
 
     if (!validateEmailOrPhone(emailOrPhone)) {
-        emailError.textContent = "Enter a valid email or phone number!";
-        valid = false;
+        if (signinError) signinError.textContent = "Enter a valid email or phone number!";
+        return;
     }
 
-    if (password !== confirmPassword) {
-        errorMessage.textContent = "Passwords do not match!";
-        valid = false;
+    if (!storedEmail || !storedPassword) {
+        if (signinError) signinError.textContent = "No account found. Please sign up first!";
+        return;
     }
 
-    if (valid) {
-        localStorage.setItem("userName", name);
-        localStorage.setItem("userEmail", emailOrPhone);
-        localStorage.setItem("userPassword", password);
-
-        alert("Sign-up successful! You can now sign in.");
-        container.classList.remove("right-panel-active"); // Switch to Sign-In panel
+    if (emailOrPhone !== storedEmail || password !== storedPassword) {
+        if (signinError) signinError.textContent = "Invalid email/phone or password!";
+        return;
     }
+
+    localStorage.setItem("isLoggedIn", "true");
+    alert("Sign-in successful! Redirecting...");
+    window.location.href = "https://demo.thingsboard.io/account/profile"; // Redirect after login
 }
 
 // Sign-In Validation
